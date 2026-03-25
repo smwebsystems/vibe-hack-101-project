@@ -1,3 +1,6 @@
 .next
+.next-build
+.next-dev
 node_modules
 tsconfig.tsbuildinfo
+.DS_Store

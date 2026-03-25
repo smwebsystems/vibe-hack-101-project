@@ -1,0 +1,8 @@
+.DS_Store
+
+# Local planning / agent notes
+AGENTS.md
+
+# Imported design artifacts
+stitch/
+*.zip

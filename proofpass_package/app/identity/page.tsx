@@ -1,9 +1,22 @@
+"use client";
+
 import { PageIntro, PageShell, Panel, PrimaryButton } from "../../components/proofpass-ui";
+import { ActionButton } from "../../components/proofpass-ui";
+import { useProofPass } from "../../components/proofpass-flow";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const fieldClassName =
   "w-full rounded-2xl bg-surface-container-lowest px-5 py-4 text-base text-on-surface outline-none ring-1 ring-transparent steady-transition placeholder:text-outline focus:ring-primary/30";
 
 export default function IdentityPage() {
+  const router = useRouter();
+  const { createCredential, isBusy } = useProofPass();
+  const [fullName, setFullName] = useState("Alex Sterling");
+  const [dateOfBirth, setDateOfBirth] = useState("1998-05-12");
+  const [documentId, setDocumentId] = useState("GBR-8829440X");
+  const [error, setError] = useState("");
+
   return (
     <PageShell>
       <section className="grid gap-8 lg:grid-cols-12">
@@ -40,12 +53,34 @@ export default function IdentityPage() {
               <div className="h-1.5 flex-1 rounded-full bg-surface-container-highest" />
             </div>
 
-            <form className="space-y-6">
+            <form
+              className="space-y-6"
+              onSubmit={async (event) => {
+                event.preventDefault();
+                if (!fullName.trim() || !dateOfBirth || !documentId.trim()) {
+                  setError("Complete all fields before creating the credential.");
+                  return;
+                }
+
+                setError("");
+                await createCredential({
+                  fullName: fullName.trim(),
+                  dateOfBirth,
+                  documentId: documentId.trim(),
+                });
+                router.push("/issued");
+              }}
+            >
               <div>
                 <label className="ml-1 font-label text-[11px] uppercase tracking-[0.18em] text-on-surface-variant">
                   Full Name
                 </label>
-                <input className={fieldClassName} placeholder="Institutional Name as per ID" />
+                <input
+                  className={fieldClassName}
+                  onChange={(event) => setFullName(event.target.value)}
+                  placeholder="Institutional Name as per ID"
+                  value={fullName}
+                />
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
@@ -53,13 +88,23 @@ export default function IdentityPage() {
                   <label className="ml-1 font-label text-[11px] uppercase tracking-[0.18em] text-on-surface-variant">
                     Date of Birth
                   </label>
-                  <input className={fieldClassName} type="date" />
+                  <input
+                    className={fieldClassName}
+                    onChange={(event) => setDateOfBirth(event.target.value)}
+                    type="date"
+                    value={dateOfBirth}
+                  />
                 </div>
                 <div>
                   <label className="ml-1 font-label text-[11px] uppercase tracking-[0.18em] text-on-surface-variant">
                     Passport / ID Number
                   </label>
-                  <input className={fieldClassName} placeholder="AB1234567" />
+                  <input
+                    className={fieldClassName}
+                    onChange={(event) => setDocumentId(event.target.value)}
+                    placeholder="AB1234567"
+                    value={documentId}
+                  />
                 </div>
               </div>
 
@@ -77,7 +122,15 @@ export default function IdentityPage() {
                 </div>
               </div>
 
-              <PrimaryButton href="/gateway">Encrypt and anchor</PrimaryButton>
+              {error ? (
+                <div className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
+                  {error}
+                </div>
+              ) : null}
+
+              <ActionButton disabled={isBusy} type="submit">
+                {isBusy ? "Encrypting credential..." : "Encrypt and anchor"}
+              </ActionButton>
             </form>
           </div>
         </div>

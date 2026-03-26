@@ -1,13 +1,20 @@
+ "use client";
+
 import { flowSteps, metadataStats } from "../components/proofpass-data";
 import {
+  ActionButton,
   PageIntro,
   Panel,
   PageShell,
-  PrimaryButton,
   SecondaryButton,
 } from "../components/proofpass-ui";
+import { useProofPass } from "../components/proofpass-flow";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
+  const { resetFlow, state } = useProofPass();
+  const router = useRouter();
+
   return (
     <PageShell>
       <section className="grid gap-10 lg:grid-cols-12 lg:items-start">
@@ -27,7 +34,14 @@ export default function HomePage() {
           />
 
           <div className="flex flex-col gap-4 sm:flex-row">
-            <PrimaryButton href="/identity">Start mock flow</PrimaryButton>
+            <ActionButton
+              onClick={() => {
+                resetFlow();
+                router.push("/identity");
+              }}
+            >
+              Start mock flow
+            </ActionButton>
             <SecondaryButton href="/verify">Review proof screen</SecondaryButton>
           </div>
 
@@ -58,26 +72,36 @@ export default function HomePage() {
                       Encrypted payload
                     </div>
                     <div className="mt-4 font-headline text-3xl font-bold text-balance">
-                      Age &gt; 18
+                      {state.proof?.resultLabel ?? state.credential?.claimLabel ?? "Age over 18"}
                     </div>
                   </div>
                   <div className="rounded-full bg-tertiary/10 px-3 py-1 font-label text-[10px] uppercase tracking-[0.18em] text-tertiary">
-                    Verified
+                    {state.proof?.verified ? "Verified" : state.credential ? "Issued" : "Ready"}
                   </div>
                 </div>
 
                 <div className="mt-8 space-y-3 text-sm text-on-surface-variant">
                   <div className="flex items-center justify-between">
                     <span>Status</span>
-                    <span className="text-tertiary">Pass</span>
+                    <span className="text-tertiary">
+                      {state.proof?.verified
+                        ? "Pass"
+                        : state.credential
+                          ? "Credential anchored"
+                          : "Demo ready"}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Hash anchor</span>
-                    <span className="font-headline text-primary">0x5f3e...d9e2</span>
+                    <span className="font-headline text-primary">
+                      {state.credential
+                        ? `${state.credential.txHash.slice(0, 10)}...${state.credential.txHash.slice(-6)}`
+                        : "0x5f3e...d9e2"}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Storage</span>
-                    <span>IPFS CID attached</span>
+                    <span>{state.credential ? "CID generated" : "IPFS CID attached"}</span>
                   </div>
                 </div>
               </div>

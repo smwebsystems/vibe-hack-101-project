@@ -1,7 +1,21 @@
-import { issuanceTimeline } from "../../components/proofpass-data";
-import { PageIntro, PageShell, Panel, PrimaryButton } from "../../components/proofpass-ui";
+"use client";
+
+import { PageIntro, PageShell, Panel, ActionButton } from "../../components/proofpass-ui";
+import { useProofPass } from "../../components/proofpass-flow";
+import { useRouter } from "next/navigation";
 
 export default function IssuedPage() {
+  const router = useRouter();
+  const { state } = useProofPass();
+  const credential = state.credential;
+
+  const timeline = [
+    { label: "Encrypting Payload", detail: credential ? "AES-GCM local encryption complete." : "Waiting for identity input.", state: credential ? "done" : "pending" },
+    { label: "Uploading to IPFS", detail: credential ? `CID prepared: ${credential.cid}` : "No encrypted payload yet.", state: credential ? "done" : "pending" },
+    { label: "Requesting Issuer Signature", detail: credential ? `Issuer signature: ${credential.issuerSignature}` : "Issuer step not started.", state: credential ? "done" : "pending" },
+    { label: "Anchoring on Polygon Amoy", detail: credential ? `Credential anchor: ${credential.txHash}` : "On-chain anchor not available.", state: credential ? "done" : "pending" },
+  ] as const;
+
   return (
     <PageShell>
       <section className="grid gap-8 lg:grid-cols-12 lg:items-start">
@@ -13,19 +27,17 @@ export default function IssuedPage() {
           />
 
           <Panel className="space-y-6 rounded-[2rem] bg-surface-container-low p-6">
-            {issuanceTimeline.map((step, index) => (
+            {timeline.map((step, index) => (
               <div key={step.label} className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div
                     className={`mt-1 h-6 w-6 rounded-full ${
                       step.state === "done"
                         ? "bg-tertiary shadow-emerald"
-                        : step.state === "active"
-                          ? "bg-primary shadow-glow"
-                          : "bg-surface-container-highest"
+                        : "bg-surface-container-highest"
                     }`}
                   />
-                  {index < issuanceTimeline.length - 1 ? (
+                  {index < timeline.length - 1 ? (
                     <div className="mt-2 h-12 w-px bg-surface-container-highest" />
                   ) : null}
                 </div>
@@ -34,9 +46,7 @@ export default function IssuedPage() {
                     className={`font-label text-[11px] uppercase tracking-[0.18em] ${
                       step.state === "pending"
                         ? "text-on-surface-variant/60"
-                        : step.state === "active"
-                          ? "text-primary"
-                          : "text-tertiary"
+                        : "text-tertiary"
                     }`}
                   >
                     {step.label}
@@ -58,14 +68,14 @@ export default function IssuedPage() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="inline-flex rounded-full bg-tertiary/10 px-3 py-1 font-label text-[10px] uppercase tracking-[0.18em] text-tertiary">
-                    Verified credential
+                    {credential ? "Issued credential" : "Credential pending"}
                   </div>
                   <div className="mt-6 font-headline text-5xl font-extrabold tracking-tight">
-                    Age: 18+
+                    {credential ? credential.claimLabel : "No credential yet"}
                   </div>
                 </div>
                 <div className="rounded-full bg-tertiary/10 px-4 py-2 font-label text-[10px] uppercase tracking-[0.18em] text-tertiary">
-                  Anchored
+                  {credential ? "Anchored" : "Pending"}
                 </div>
               </div>
 
@@ -75,7 +85,7 @@ export default function IssuedPage() {
                     Issuer
                   </div>
                   <div className="mt-2 font-headline text-lg font-semibold">
-                    Trusted Mock Authority
+                    {credential?.issuer ?? "Trusted Mock Authority"}
                   </div>
                 </div>
                 <div>
@@ -83,7 +93,13 @@ export default function IssuedPage() {
                     Issued date
                   </div>
                   <div className="mt-2 font-headline text-lg font-semibold">
-                    March 25, 2026
+                    {credential
+                      ? new Date(credential.issuedAt).toLocaleDateString("en-ZA", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "Not issued"}
                   </div>
                 </div>
                 <div className="md:col-span-2">
@@ -91,7 +107,7 @@ export default function IssuedPage() {
                     IPFS content identifier
                   </div>
                   <div className="mt-2 rounded-2xl bg-surface-container-low px-4 py-3 font-mono text-sm text-primary">
-                    QmXoyp...MshC7W8XhM7Y3ZpL
+                    {credential?.cid ?? "No CID generated"}
                   </div>
                 </div>
                 <div className="md:col-span-2">
@@ -99,13 +115,26 @@ export default function IssuedPage() {
                     Amoy transaction hash
                   </div>
                   <div className="mt-2 rounded-2xl bg-surface-container-low px-4 py-3 font-mono text-sm text-on-surface">
-                    0x5f3e...b4a1c7d9e2f0
+                    {credential?.txHash ?? "No transaction hash"}
+                  </div>
+                </div>
+                <div className="md:col-span-2">
+                  <div className="font-label text-[10px] uppercase tracking-[0.18em] text-on-surface-variant">
+                    Payload hash
+                  </div>
+                  <div className="mt-2 rounded-2xl bg-surface-container-low px-4 py-3 font-mono text-sm text-primary">
+                    {credential?.payloadHash ?? "No payload hash"}
                   </div>
                 </div>
               </div>
 
               <div className="mt-10">
-                <PrimaryButton href="/">View my credentials</PrimaryButton>
+                <ActionButton
+                  disabled={!credential}
+                  onClick={() => router.push(credential ? "/gateway" : "/identity")}
+                >
+                  {credential ? "Open verification gateway" : "Create credential"}
+                </ActionButton>
               </div>
             </div>
           </div>

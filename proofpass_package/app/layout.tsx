@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ProofPassProvider } from "../components/proofpass-flow";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ProofPassProvider>{children}</ProofPassProvider>
+      </body>
     </html>
   );
 }

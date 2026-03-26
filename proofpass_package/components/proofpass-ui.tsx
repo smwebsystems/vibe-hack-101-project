@@ -138,6 +138,37 @@ export function PrimaryButton({
   );
 }
 
+export function ActionButton({
+  children,
+  disabled,
+  onClick,
+  tone = "primary",
+  type = "button",
+}: {
+  children: React.ReactNode;
+  disabled?: boolean;
+  onClick?: () => void;
+  tone?: "primary" | "secondary";
+  type?: "button" | "submit";
+}) {
+  return (
+    <button
+      className={cn(
+        "steady-transition inline-flex cursor-pointer items-center justify-center rounded-soft px-6 py-4 font-headline text-sm font-bold uppercase tracking-[0.14em]",
+        tone === "primary"
+          ? "bg-proof-gradient text-on-primary shadow-glow hover:brightness-110"
+          : "bg-surface-container-high text-primary ghost-border hover:bg-surface-container-highest",
+        disabled && "cursor-not-allowed opacity-50 hover:brightness-100",
+      )}
+      disabled={disabled}
+      onClick={onClick}
+      type={type}
+    >
+      {children}
+    </button>
+  );
+}
+
 export function SecondaryButton({
   href,
   children,

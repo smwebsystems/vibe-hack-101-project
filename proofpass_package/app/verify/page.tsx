@@ -1,13 +1,23 @@
-import { proofFields } from "../../components/proofpass-data";
+"use client";
+
+import { supportedClaimLabel, verifierAppName } from "../../components/proofpass-data";
 import {
+  ActionButton,
   PageIntro,
   Panel,
   PageShell,
-  PrimaryButton,
   SecondaryButton,
 } from "../../components/proofpass-ui";
+import { useProofPass } from "../../components/proofpass-flow";
+import { useRouter } from "next/navigation";
 
 export default function VerifyPage() {
+  const router = useRouter();
+  const { createProof, isBusy, state } = useProofPass();
+  const identity = state.identity;
+  const credential = state.credential;
+  const proof = state.proof;
+
   return (
     <PageShell>
       <PageIntro
@@ -20,7 +30,7 @@ export default function VerifyPage() {
               Requesting dapp
             </div>
             <div className="mt-1 font-headline text-lg font-semibold">
-              The Wine Cellar
+              {proof?.verifierApp ?? verifierAppName}
             </div>
           </div>
         }
@@ -31,7 +41,12 @@ export default function VerifyPage() {
           <Panel className="rounded-[2.25rem]">
             <div className="font-headline text-xl font-bold">Institutional data disclosure</div>
             <div className="mt-6 space-y-4">
-              {proofFields.map((field) => (
+              {[
+                { label: "Full Name", value: identity?.fullName ?? "No credential loaded", hidden: true },
+                { label: "Date of Birth", value: identity?.dateOfBirth ?? "-", hidden: true },
+                { label: "Verification Claim", value: proof?.resultLabel ?? credential?.claimLabel ?? supportedClaimLabel, hidden: false },
+                { label: "Passport Number", value: identity?.documentId ?? "-", hidden: true },
+              ].map((field) => (
                 <div
                   key={field.label}
                   className={`flex items-center justify-between rounded-2xl p-5 ${
@@ -76,7 +91,7 @@ export default function VerifyPage() {
                 Match type
               </div>
               <div className="mt-2 font-headline text-lg font-semibold">
-                On-chain match found
+                {proof?.verified ? "On-chain match found" : credential ? "Ready to verify" : "Credential missing"}
               </div>
             </Panel>
             <Panel className="rounded-[1.5rem] bg-surface-container-low p-5">
@@ -84,7 +99,7 @@ export default function VerifyPage() {
                 Authority
               </div>
               <div className="mt-2 font-headline text-lg font-semibold">
-                Issuer trusted
+                {credential ? "Issuer trusted" : "Issue a credential first"}
               </div>
             </Panel>
           </div>
@@ -101,16 +116,52 @@ export default function VerifyPage() {
             </p>
 
             <div className="mt-8 flex flex-col gap-4">
-              <PrimaryButton href="/issued">Sign to verify</PrimaryButton>
+              <ActionButton
+                disabled={!credential || isBusy}
+                onClick={async () => {
+                  if (!credential) {
+                    router.push("/identity");
+                    return;
+                  }
+                  await createProof();
+                }}
+              >
+                {!credential
+                  ? "Create credential first"
+                  : isBusy
+                    ? "Signing proof..."
+                    : proof
+                      ? "Proof signed"
+                      : "Sign to verify"}
+              </ActionButton>
               <SecondaryButton href="/">Return to dapp</SecondaryButton>
             </div>
+
+            {proof ? (
+              <div
+                className={`mt-8 rounded-2xl px-4 py-4 ${
+                  proof.verified ? "bg-tertiary/10 text-tertiary" : "bg-danger/10 text-danger"
+                }`}
+              >
+                <div className="font-label text-[10px] uppercase tracking-[0.18em]">
+                  Verification result
+                </div>
+                <div className="mt-2 font-headline text-xl font-bold">
+                  {proof.verified ? "Pass: over 18 verified" : "Fail: claim could not be proven"}
+                </div>
+              </div>
+            ) : null}
 
             <div className="mt-8 rounded-2xl bg-surface-container-lowest p-4">
               <div className="font-label text-[10px] uppercase tracking-[0.18em] text-on-surface-variant">
                 Request digest
               </div>
               <code className="mt-3 block break-all text-xs text-primary">
-                0x9f2e...d4c1 | SIGN_REQ_AGE_OVER_18 | NONCE: 82294
+                {proof
+                  ? `${proof.requestDigest} | NONCE: ${proof.requestNonce}`
+                  : credential
+                    ? `0x${credential.claimHash.slice(0, 12)}... | CLAIM: AGE_OVER_18`
+                    : "Issue a credential to generate a proof request."}
               </code>
             </div>
           </div>

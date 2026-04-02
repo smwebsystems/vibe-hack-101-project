@@ -8,11 +8,9 @@ import {
   PageShell,
   SecondaryButton,
 } from "../components/proofpass-ui";
-import { useProofPass } from "../components/proofpass-flow";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  const { resetFlow, state } = useProofPass();
   const router = useRouter();
 
   return (
@@ -20,7 +18,7 @@ export default function HomePage() {
       <section className="grid gap-10 lg:grid-cols-12 lg:items-start">
         <div className="space-y-8 lg:col-span-7 lg:pr-8">
           <PageIntro
-            eyebrow="Privacy-Preserving Verification"
+            eyebrow="Verifier-Backed Age Credentials"
             title={
               <>
                 Prove the{" "}
@@ -30,19 +28,14 @@ export default function HomePage() {
                 ,<br className="hidden md:block" /> not the person.
               </>
             }
-            body="Verify age, eligibility, or credentials without exposing raw identity data. ProofPass is a small, visual demo of privacy-first verification with pass or fail outcomes only."
+            body="Upload an ID or passport, extract the holder details through the OCR verifier, then store only a signed age attestation on-chain. Verifiers later check the wallet without seeing the source document."
           />
 
           <div className="flex flex-col gap-4 sm:flex-row">
-            <ActionButton
-              onClick={() => {
-                resetFlow();
-                router.push("/identity");
-              }}
-            >
-              Start mock flow
+            <ActionButton onClick={() => router.push("/identity")}>
+              Start age verification
             </ActionButton>
-            <SecondaryButton href="/verify">Review proof screen</SecondaryButton>
+            <SecondaryButton href="/verify">Check a wallet</SecondaryButton>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -69,58 +62,50 @@ export default function HomePage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="font-label text-[10px] uppercase tracking-[0.18em] text-on-surface-variant">
-                      Encrypted payload
+                      Verifier-backed attestation
                     </div>
                     <div className="mt-4 font-headline text-3xl font-bold text-balance">
-                      {state.proof?.resultLabel ?? state.credential?.claimLabel ?? "Age over 18"}
+                      Age over 18
                     </div>
                   </div>
                   <div className="rounded-full bg-tertiary/10 px-3 py-1 font-label text-[10px] uppercase tracking-[0.18em] text-tertiary">
-                    {state.proof?.verified ? "Verified" : state.credential ? "Issued" : "Ready"}
+                    Ready
                   </div>
                 </div>
 
                 <div className="mt-8 space-y-3 text-sm text-on-surface-variant">
                   <div className="flex items-center justify-between">
-                    <span>Status</span>
-                    <span className="text-tertiary">
-                      {state.proof?.verified
-                        ? "Pass"
-                        : state.credential
-                          ? "Credential anchored"
-                          : "Demo ready"}
-                    </span>
+                    <span>Document handling</span>
+                    <span className="text-tertiary">OCR review off-chain</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>Hash anchor</span>
-                    <span className="font-headline text-primary">
-                      {state.credential
-                        ? `${state.credential.txHash.slice(0, 10)}...${state.credential.txHash.slice(-6)}`
-                        : "0x5f3e...d9e2"}
-                    </span>
+                    <span>Chain record</span>
+                    <span className="font-headline text-primary">Subject + age claim</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>Storage</span>
-                    <span>{state.credential ? "CID generated" : "IPFS CID attached"}</span>
+                    <span>Verifier view</span>
+                    <span>Age result, signer, expiry</span>
                   </div>
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
                 {flowSteps.map((step) => (
                   <div
                     key={step.id}
-                    className="rounded-[1.5rem] bg-surface-container-low p-5"
+                    className="rounded-[1.5rem] bg-surface-container-low p-5 lg:grid lg:grid-cols-[4.5rem_minmax(0,1fr)] lg:items-start lg:gap-5"
                   >
-                    <div className="font-headline text-sm font-bold text-primary">
+                    <div className="font-headline text-sm font-bold text-primary lg:pt-1">
                       {step.id}
                     </div>
-                    <div className="mt-3 font-headline text-lg font-semibold">
-                      {step.title}
+                    <div>
+                      <div className="mt-3 text-pretty font-headline text-lg font-semibold leading-tight lg:mt-0 lg:text-[1.35rem]">
+                        {step.title}
+                      </div>
+                      <p className="mt-3 text-sm leading-6 text-on-surface-variant lg:max-w-[44ch]">
+                        {step.body}
+                      </p>
                     </div>
-                    <p className="mt-3 text-sm leading-6 text-on-surface-variant">
-                      {step.body}
-                    </p>
                   </div>
                 ))}
               </div>
@@ -144,17 +129,17 @@ export default function HomePage() {
           </p>
         </Panel>
         <Panel className="rounded-[2rem] bg-surface-container-low">
-          <div className="font-headline text-2xl font-bold">Local encryption</div>
+          <div className="font-headline text-2xl font-bold">Off-chain document review</div>
           <p className="mt-3 text-sm leading-6 text-on-surface-variant">
-            Sensitive fields are encrypted before any network step. The device is the
-            vault.
+            The uploaded image is sent to the OCR verifier for extraction and match
+            checks before any on-chain write happens.
           </p>
         </Panel>
         <Panel className="rounded-[2rem] bg-surface-container-low">
           <div className="font-headline text-2xl font-bold">Minimal chain state</div>
           <p className="mt-3 text-sm leading-6 text-on-surface-variant">
-            Contract state is small and legible. The chain proves integrity, not data
-            ownership over full records.
+            The contract stores the age attestation and verification metadata, not the
+            source document or full identity record.
           </p>
         </Panel>
       </section>

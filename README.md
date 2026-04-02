@@ -1,84 +1,38 @@
 # ProofPass
 
-ProofPass is a privacy-preserving credential verification demo.
+ProofPass is a privacy-first credential verification demo focused on one clear
+outcome:
 
-The project goal is to prove a fact such as `age > 18` without exposing the
-raw personal data behind it.
+> Verify age without revealing the source identity document.
 
-## Repo Summary
+The active product lives in
+[/Users/raven/Desktop/vibe-hack-101-project/proofpass_package](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package).
 
-This repository currently contains:
+## Repo Contents
 
-- a Next.js + Tailwind frontend prototype in [proofpass_package](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package)
-- product/source docs for the demo concept, style, and brand voice
-- a project-wide tracker in [TODO.md](/Users/raven/Desktop/vibe-hack-101-project/TODO.md)
+- [proofpass_package](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package):
+  deployed Next.js frontend
+- [ocr_api_prod](/Users/raven/Desktop/vibe-hack-101-project/ocr_api_prod):
+  deployed Railway OCR and attestation API
+- [proofpass_package/DEV_BRIEF.md](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/DEV_BRIEF.md):
+  product scope
+- [proofpass_package/STYLE_GUIDE.md](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/STYLE_GUIDE.md):
+  visual direction
+- [proofpass_package/BRAND_VOICE.md](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/BRAND_VOICE.md):
+  copy and messaging rules
 
 ## Current State
 
 Implemented:
-- landing page
-- mock KYC entry screen
-- verification gateway screen
-- selective disclosure verification screen
-- issuance / anchoring success screen
-- UI cleanup pass and shared shell/components
-- local dev/runtime stabilization for this machine
 
-Not implemented yet:
-- wallet integration
-- client-side encryption flow
-- IPFS upload
-- issuer signing
-- smart contract
-- real end-to-end verification flow
+- live frontend deployed to Railway
+- live OCR API deployed to Railway
+- OCR-backed issuance flow
+- verifier read flow
+- wallet-based on-chain submission flow
+- Polygon Amoy registry integration
+- live runtime config fetched from the OCR API
 
-## Project Structure
+The most useful product documentation is the app README:
 
-### Root
-- [README.md](/Users/raven/Desktop/vibe-hack-101-project/README.md): repo-level overview
-- [TODO.md](/Users/raven/Desktop/vibe-hack-101-project/TODO.md): project-wide task tracker
-- [LICENSE](/Users/raven/Desktop/vibe-hack-101-project/LICENSE)
-
-### ProofPass Package
-- [README.md](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/README.md): app/project brief
-- [DEV_BRIEF.md](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/DEV_BRIEF.md): product and technical brief
-- [STYLE_GUIDE.md](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/STYLE_GUIDE.md): visual direction
-- [BRAND_VOICE.md](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/BRAND_VOICE.md): messaging rules
-- [app](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/app): Next.js app routes
-- [components](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/components): shared UI/data helpers
-- [scripts](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/scripts): local runtime support scripts
-
-## Frontend Routes
-
-The current frontend in `proofpass_package` exposes:
-
-- `/` landing screen
-- `/identity` mock KYC entry
-- `/gateway` verification QR gateway
-- `/verify` selective disclosure portal
-- `/issued` issuance and anchoring success
-
-## Run The Frontend
-
-From [proofpass_package](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package):
-
-```bash
-npm install
-npm run dev
-```
-
-Notes:
-- the project uses separate Next output directories for dev and build to avoid stale chunk issues
-- the project includes a Node localStorage shim because this machine exposes a broken server-side `localStorage` object
-
-## Next Steps
-
-The highest-priority next tasks are:
-
-1. Add shared client state across the demo flow.
-2. Implement client-side encryption and payload hash generation.
-3. Implement a mock issuer signing path.
-4. Add wallet connection and Amoy registration flow.
-5. Upgrade Next to a patched release and reverify dev/build.
-
-For the full task list, see [TODO.md](/Users/raven/Desktop/vibe-hack-101-project/TODO.md).
+- [proofpass_package/README.md](/Users/raven/Desktop/vibe-hack-101-project/proofpass_package/README.md)

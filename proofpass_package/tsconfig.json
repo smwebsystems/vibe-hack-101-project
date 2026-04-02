@@ -27,7 +27,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next-build/types/**/*.ts",
-    ".next/types/**/*.ts",
     "next-env.d.ts",
     ".next-dev/types/**/*.ts"
   ],

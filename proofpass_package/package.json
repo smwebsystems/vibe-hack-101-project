@@ -7,10 +7,11 @@
     "dev": "NEXT_DIST_DIR=.next-dev npm run clean && NODE_OPTIONS='--require ./scripts/node-localstorage-shim.cjs' NEXT_DIST_DIR=.next-dev next dev",
     "build": "NEXT_DIST_DIR=.next-build npm run clean && NODE_OPTIONS='--require ./scripts/node-localstorage-shim.cjs' NEXT_DIST_DIR=.next-build next build",
     "start": "NODE_OPTIONS='--require ./scripts/node-localstorage-shim.cjs' NEXT_DIST_DIR=.next-build next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json"
   },
   "dependencies": {
-    "next": "15.3.0",
+    "ethers": "6.15.0",
+    "next": "^15.5.14",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "tesseract.js": "6.0.1"

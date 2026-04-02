@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { ProofPassProvider } from "../components/proofpass-flow";
+import { ThemePreviewController } from "../components/theme-preview";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,6 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Suspense fallback={null}>
+          <ThemePreviewController />
+        </Suspense>
         <ProofPassProvider>{children}</ProofPassProvider>
       </body>
     </html>

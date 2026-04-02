@@ -1,33 +1,31 @@
 export const navigation = [
   { href: "/", label: "Home" },
   { href: "/identity", label: "Issue" },
-  { href: "/gateway", label: "Gateway" },
   { href: "/verify", label: "Verify" },
-  { href: "/ocr-test", label: "OCR" },
 ];
 
 export const flowSteps = [
   {
     id: "01",
-    title: "Input mock KYC locally",
-    body: "The user enters demo identity data on-device. Raw fields do not leave the browser.",
+    title: "Upload identity evidence",
+    body: "The user provides claimed details and uploads an ID or passport for OCR extraction and review.",
   },
   {
     id: "02",
-    title: "Encrypt payload and derive credential",
-    body: "The frontend encrypts the payload, derives a hash, produces a CID-like identifier, and prepares issuer metadata.",
+    title: "Verify and sign age",
+    body: "The verifier checks the extracted fields, derives a commitment, and signs the age attestation for the subject wallet.",
   },
   {
     id: "03",
-    title: "Prove one fact later",
-    body: "The verifier receives only the requested claim result, not the full identity record behind it.",
+    title: "Read result on-chain",
+    body: "Later, a verifier checks the wallet and reads the stored age result, signer, and validity window from chain.",
   },
 ];
 
 export const metadataStats = [
-  { label: "Data leaves device", value: "Encrypted only" },
-  { label: "Trust anchor", value: "Polygon Amoy" },
-  { label: "Verifier result", value: "Pass / Fail" },
+  { label: "Document path", value: "OCR review" },
+  { label: "Trust anchor", value: "On-chain registry" },
+  { label: "Verifier output", value: "Age + validity" },
 ];
 
 export const issuerName = "Trusted Mock Authority";

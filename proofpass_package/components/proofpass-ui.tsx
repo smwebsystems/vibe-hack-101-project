@@ -12,17 +12,17 @@ export function TopBar() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 px-4 pt-4 md:px-6">
-      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-[1.75rem] border border-white/10 bg-surface/80 px-4 py-4 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl md:px-6">
-        <Link href="/" className="flex items-center gap-3 rounded-2xl steady-transition hover:opacity-90">
-          <div className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-primary/10 text-primary shadow-glow">
-            <span className="font-headline text-lg font-semibold">P</span>
+    <header className="sticky top-0 z-50 px-3 pt-3 md:px-6 md:pt-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between rounded-[1.35rem] border border-white/10 bg-surface/80 px-3 py-3 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl md:rounded-[1.75rem] md:px-6 md:py-4">
+        <Link href="/" className="flex min-w-0 items-center gap-3 rounded-2xl steady-transition hover:opacity-90">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem] bg-primary/10 text-primary shadow-glow md:h-11 md:w-11 md:rounded-[1rem]">
+            <span className="font-headline text-base font-semibold md:text-lg">P</span>
           </div>
-          <div>
-            <div className="font-headline text-2xl font-bold tracking-tight text-primary">
+          <div className="min-w-0">
+            <div className="truncate font-headline text-lg font-bold tracking-tight text-primary md:text-2xl">
               ProofPass
             </div>
-            <div className="font-label text-[10px] uppercase tracking-serial text-on-surface-variant">
+            <div className="truncate font-label text-[9px] uppercase tracking-serial text-on-surface-variant md:text-[10px]">
               Sovereign Vault
             </div>
           </div>
@@ -55,15 +55,6 @@ export function TopBar() {
             );
           })}
         </nav>
-
-        <div className="rounded-[1rem] bg-surface-container-high px-4 py-2 ghost-border">
-          <div className="font-label text-[10px] uppercase tracking-[0.18em] text-on-surface-variant">
-            Polygon Amoy
-          </div>
-          <div className="mt-1 font-headline text-sm font-semibold text-primary">
-            0x71C...492d
-          </div>
-        </div>
       </div>
     </header>
   );
@@ -74,7 +65,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pt-2 md:hidden">
-      <div className="mx-auto flex max-w-md items-center justify-between rounded-[1.5rem] border border-white/10 bg-surface/90 px-3 py-2 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl">
+      <div className="mx-auto grid max-w-md grid-cols-5 gap-1 rounded-[1.5rem] border border-white/10 bg-surface/90 p-2 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl">
         {navigation.map((item) => {
           const active =
             item.href === "/" ? pathname === "/" : pathname?.startsWith(item.href);
@@ -84,13 +75,13 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "rounded-xl px-3 py-2 font-label text-[11px] uppercase tracking-[0.12em] steady-transition",
+                "flex min-w-0 items-center justify-center rounded-xl px-2 py-2 text-center font-label text-[10px] uppercase tracking-[0.08em] steady-transition",
                 active
                   ? "bg-proof-gradient text-surface shadow-glow"
                   : "text-on-surface-variant",
               )}
             >
-              {item.label}
+              <span className="truncate">{item.label}</span>
             </Link>
           );
         })}
@@ -107,7 +98,7 @@ export function PageShell({
   return (
     <div className="min-h-screen bg-surface text-on-surface">
       <TopBar />
-      <main className="mx-auto max-w-7xl px-6 pb-28 pt-10 md:pt-12">{children}</main>
+      <main className="mx-auto max-w-7xl px-4 pb-28 pt-8 md:px-6 md:pt-12">{children}</main>
       <BottomNav />
     </div>
   );
@@ -131,7 +122,7 @@ export function PrimaryButton({
   return (
     <Link
       href={href}
-      className="steady-transition inline-flex items-center justify-center rounded-soft bg-proof-gradient px-6 py-4 font-headline text-sm font-bold uppercase tracking-[0.14em] text-on-primary shadow-glow hover:brightness-110"
+      className="steady-transition inline-flex w-full items-center justify-center rounded-soft bg-proof-gradient px-6 py-4 text-center font-headline text-sm font-bold uppercase tracking-[0.14em] text-on-primary shadow-glow hover:brightness-110 sm:w-auto"
     >
       {children}
     </Link>
@@ -154,7 +145,7 @@ export function ActionButton({
   return (
     <button
       className={cn(
-        "steady-transition inline-flex cursor-pointer items-center justify-center rounded-soft px-6 py-4 font-headline text-sm font-bold uppercase tracking-[0.14em]",
+        "steady-transition inline-flex w-full cursor-pointer items-center justify-center rounded-soft px-6 py-4 text-center font-headline text-sm font-bold uppercase tracking-[0.14em] sm:w-auto",
         tone === "primary"
           ? "bg-proof-gradient text-on-primary shadow-glow hover:brightness-110"
           : "bg-surface-container-high text-primary ghost-border hover:bg-surface-container-highest",
@@ -179,7 +170,7 @@ export function SecondaryButton({
   return (
     <Link
       href={href}
-      className="steady-transition inline-flex items-center justify-center rounded-soft bg-surface-container-high px-6 py-4 font-headline text-sm font-bold uppercase tracking-[0.14em] text-primary ghost-border hover:bg-surface-container-highest"
+      className="steady-transition inline-flex w-full items-center justify-center rounded-soft bg-surface-container-high px-6 py-4 text-center font-headline text-sm font-bold uppercase tracking-[0.14em] text-primary ghost-border hover:bg-surface-container-highest sm:w-auto"
     >
       {children}
     </Link>
@@ -215,11 +206,11 @@ export function PageIntro({
     <section className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
       <div className="max-w-3xl">
         <SectionLabel>{eyebrow}</SectionLabel>
-        <h1 className="mt-4 font-headline text-4xl font-bold tracking-tight md:text-5xl">
+        <h1 className="mt-4 font-headline text-3xl font-bold tracking-tight md:text-5xl">
           {title}
         </h1>
         {body ? (
-          <p className="mt-4 max-w-2xl text-base leading-7 text-on-surface-variant md:text-lg">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-on-surface-variant md:text-lg">
             {body}
           </p>
         ) : null}
